@@ -8,7 +8,11 @@ const useLocalStorage = () => {
     return JSON.parse(localStorage.getItem(chave));
   };
 
-  return { adicionarItem, obterItem };
+  const removerItem = (chave) => {
+    localStorage.removeItem(chave);
+  }
+
+  return { adicionarItem, obterItem, removerItem };
 };
 
 export default useLocalStorage;
