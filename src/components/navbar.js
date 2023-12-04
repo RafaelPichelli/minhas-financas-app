@@ -1,31 +1,36 @@
 import React from "react";
 import NavbarItem from "./navbarItem";
+import { AuthConsumer } from "../main/provedorAutenticacao";
 
 function Navbar() {
     return (
-        <div className="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
-            <div className="container">
-                <a href="https://bootswatch.com/" className="navbar-brand">Minhas Finanças</a>
-                <button className="navbar-toggler"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#navbarResponsive"
-                    aria-controls="navbarResponsive"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-                <div className="collapse navbar-collapse" id="navbarResponsive">
-                    <ul className="navbar-nav">
-                        <NavbarItem href="#/home" label="Home"/>
-                        <NavbarItem href="#/cadastro-usuarios" label="Usuários"/>
-                        <NavbarItem href="#/" label="Lançamentos"/>
-                        <NavbarItem href="#/login" label="Login"/>
-                    </ul>
+        <AuthConsumer>
+            {(context) => (
+                <div className="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
+                    <div className="container">
+                        <a href="#/home" className="navbar-brand">Minhas Finanças</a>
+                        <button className="navbar-toggler"
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#navbarResponsive"
+                            aria-controls="navbarResponsive"
+                            aria-expanded="false"
+                            aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+                        <div className="collapse navbar-collapse" id="navbarResponsive">
+                            <ul className="navbar-nav">
+                                <NavbarItem render={context.isAutenticado} href="#/home" label="Home"/>
+                                <NavbarItem render={context.isAutenticado} href="#/cadastro-usuarios" label="Usuários"/>
+                                <NavbarItem render={context.isAutenticado} href="#/consulta-lancamentos" label="Lançamentos"/>
+                                <NavbarItem render={context.isAutenticado} onClick={context.encerrarSessao}href="#/login" label="Sair"/>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    )
+            )}
+        </AuthConsumer>
+    );
 }
 
 export default Navbar;

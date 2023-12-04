@@ -1,7 +1,7 @@
 import React from "react";
 import currencyFormatter from 'currency-formatter';
 
-export default props => {
+const LancamentosTable = (props) => {
 
     const rows = props.lancamentos.map((lancamento) => {
         return(
@@ -12,12 +12,32 @@ export default props => {
                 <td>{lancamento.mes}</td>
                 <td>{lancamento.status}</td>
                 <td>
+                    <button onClick={e => props.alterarStatus(lancamento,'EFETIVADO')} 
+                    type="button"
+                    className="btn btn-success"
+                    title="Efetivar"
+                    disabled={ lancamento.status !== 'PENDENTE'}>
+                        <i className="pi pi-check"/>
+                    </button>
+                    <button onClick={e => props.alterarStatus(lancamento,'CANCELADO')} 
+                    type="button"
+                    className="btn btn-warning"
+                    title="Cancelar"
+                    disabled={ lancamento.status !== 'PENDENTE'}>
+                        <i className="pi pi-times"/>
+                    </button>
                     <button type="button" 
                         className="btn btn-primary"
-                        onClick={e => props.editAction(lancamento.id)}>Editar</button>
+                        onClick={e => props.editAction(lancamento.id)}
+                        title="Editar">
+                            <i className="pi pi-pencil"/>
+                        </button>
                     <button type="button" 
                         className="btn btn-danger" 
-                        onClick={e => props.deleteAction(lancamento)}>Deletar</button>
+                        onClick={e => props.deleteAction(lancamento)}
+                        title="Excluir">
+                            <i className="pi pi-trash"/>
+                        </button>
                 </td>
             </tr>
         )
@@ -41,3 +61,5 @@ export default props => {
         </table>
     )
 }
+
+export default LancamentosTable;

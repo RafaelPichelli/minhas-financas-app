@@ -1,4 +1,5 @@
 import useApi from '../useApi';
+import ErroValidacao from '../exception/erroValidacao';
 
 const useLancamentoService = () => {
     const api = useApi();
@@ -31,37 +32,72 @@ const useLancamentoService = () => {
     }
 
     const consultarLancamentos = (lancamentoFiltro) => {
-        let params = `${baseEndPoint}?ano=${lancamentoFiltro.ano}`
-    
-        if(lancamentoFiltro.mes){
-            params=`${params}&mes=${lancamentoFiltro.mes}`
-        }
-        if(lancamentoFiltro.tipo){
-            params=`${params}&tipo=${lancamentoFiltro.tipo}`
-        }
-        if(lancamentoFiltro.status){
-            params=`${params}&status=${lancamentoFiltro.status}`
-        }
-        if(lancamentoFiltro.usuario){
-            params=`${params}&usuario=${lancamentoFiltro.usuario}`
-        }
-        if(lancamentoFiltro.descricao){
-            params=`${params}&descricao=${lancamentoFiltro.descricao}`
-        }
-
+        const params = [
+            `${baseEndPoint}?ano=${lancamentoFiltro.ano}`,
+            lancamentoFiltro.mes && `mes=${lancamentoFiltro.mes}`,
+            lancamentoFiltro.tipo && `tipo=${lancamentoFiltro.tipo}`,
+            lancamentoFiltro.status && `status=${lancamentoFiltro.status}`,
+            lancamentoFiltro.usuario && `usuario=${lancamentoFiltro.usuario}`,
+            lancamentoFiltro.descricao && `descricao=${lancamentoFiltro.descricao}`,
+        ].filter(Boolean).join('&');
 
         return api.get(params);
+    }
+
+    const obterPorId = (id) => {
+        return api.get(`${baseEndPoint}/${id}`)
     }
 
     const  deletar = (id) => {
         return api.remove(`${baseEndPoint}/${id}`);
     }
 
+    const salvar = (lancamento) => {
+        return api.post(baseEndPoint, lancamento);
+    }
+
+    const atualizar = (lancamento) => {
+        return api.put(`${baseEndPoint}/${lancamento.id}`, lancamento)
+    }
+
+    const validar = (lancamento) => {
+        const erros = [];
+
+        if(!lancamento.ano){
+            erros.push("Informe o ano.")
+        }
+        if(!lancamento.mes){
+            erros.push("Informe o mês.")
+       }
+       if(!lancamento.descricao){
+        erros.push("Informe o descrição.")
+        }
+        if(!lancamento.valor){
+            erros.push("Informe o valor.")
+        }
+        if(!lancamento.tipo){
+            erros.push("Informe o tipo.")
+        }
+
+        if(erros && erros.length > 0){
+            throw new ErroValidacao(erros);
+        }
+    }
+
+    const alterarStatus = (id, status) => {
+        return api.put(`${baseEndPoint}/${id}/atualiza-status`, {status})
+    }
+
     return {
         consultarLancamentos,
+        obterPorId,
         obterListaMeses,
         obterListaTipos,
-        deletar
+        deletar,
+        salvar,
+        atualizar,
+        validar,
+        alterarStatus
     };
 };
 

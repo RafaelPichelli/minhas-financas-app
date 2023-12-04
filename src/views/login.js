@@ -1,26 +1,25 @@
-import React from "react";
+import React, {useContext, useState} from "react";
 import Card from "../components/card";
 import FormGroup from "../components/form-group";
 import { useNavigate } from 'react-router-dom';
 import useUsuarioService from "../app/service/useUsuarioService";
-import useLocalStorage from "../app/service/useLocalStorage";
 import {mensagemErro} from '../components/toastr'
+import { AuthContext } from '../main/provedorAutenticacao'
 
 function Login() {
     const navigate = useNavigate();
     const usuarioService = useUsuarioService();
-    
-    const {adicionarItem} = useLocalStorage();
+    const { iniciarSessao } = useContext(AuthContext);
 
-    const [email, setEmail] = React.useState('');
-    const [senha, setSenha] = React.useState('');
+    const [email, setEmail] = useState('');
+    const [senha, setSenha] = useState('');
     
     const entrar = async () => {
         usuarioService.autenticar({
             email: email,
             senha: senha
         }).then(response => {
-            adicionarItem('_usuario_logado', response.data)
+            iniciarSessao(response.data);
             navigate('/home');
         }).catch (erro => {
             mensagemErro(erro.response.data)
@@ -59,8 +58,10 @@ function Login() {
                                             placeholder="Password"
                                         />
                                     </FormGroup>
-                                    <button onClick={entrar} className="btn btn-success">Entrar</button>
-                                    <button onClick={prepareCadastrar} className="btn btn-danger">Cadastrar</button>
+                                    <button onClick={entrar} className="btn btn-success">
+                                    <i className="pi pi-sign-in"/> Entrar</button>
+                                    <button onClick={prepareCadastrar} className="btn btn-danger">
+                                    <i className="pi pi-plus"/> Cadastrar</button>
                                 </fieldset>
                             </div>
                         </div>
